@@ -1,56 +1,102 @@
 # AICalculatorApp
 
-AICalculatorApp is a small Java and Maven application used for deployment practice activities in a learner guide.
+AICalculatorApp is a small Java and Maven application used for practical deployment activities in the ICTPRG534 learner guide.
 
-The project is intentionally simple so learners can focus on practical deployment work, including building, packaging, testing, versioning and publishing release artefacts.
+The project supports Chapters 1 to 8 of the manual. It gives learners a completed application that can be opened, checked, built, packaged, versioned, configured, tested, removed and rebuilt without spending the unit writing a large application from scratch.
 
-## Project purpose
+## Practical scope
 
-This project supports practical activities such as:
+The project supports hands-on activities including:
 
-- Opening a completed Java project in an editor or IDE
-- Checking the Maven project structure
+- Opening the source project in Visual Studio Code or IntelliJ IDEA
+- Checking Java, Maven and Git from the terminal
 - Building the application with Maven
-- Creating a packaged JAR file
-- Running the packaged application from the terminal
-- Preparing release folders such as v0.1
-- Pushing source code to GitHub
-- Creating release artefacts for deployment practice
+- Running the packaged JAR file
+- Creating release folders and ZIP artefacts
+- Using Git tags such as v0.1, v0.2 and v0.3
+- Checking database scripts and seed data
+- Running with Development, Test, Train and Production-style configuration files
+- Testing uninstall scripts and retained release artefacts
+- Supporting rollback and rebuild practice
 
 ## Project structure
 
+```text
 AICalculatorApp/
-- pom.xml
-- src/main/java/au/training/calculator/App.java
+├── pom.xml
+├── src/main/java/au/training/calculator/App.java
+├── src/main/java/au/training/calculator/AppV02Example.java
+├── config/
+│   ├── application-dev.properties
+│   ├── application-test.properties
+│   ├── application-train.properties
+│   └── application-prod.properties
+└── database/
+    ├── schema-v0.1.sql
+    └── seed-v0.1.sql
+```
 
 ## Build the package
 
 Run this command from the project root folder:
 
+```bash
 mvn clean package
-
-The package output will be created in the target folder.
+```
 
 Expected package file:
 
+```text
 target/ai-calculator-1.0.jar
+```
 
 ## Run the packaged application
 
-Run this command from the project root folder after building:
-
+```bash
 java -jar target/ai-calculator-1.0.jar
+```
 
-Expected output:
+Expected base output:
 
+```text
 AI Calculator v0.1
 2 + 3 = 5
 10 - 4 = 6
 5 x 6 = 30
 20 / 4 = 5
+```
 
-## Release version
+## Run with a configuration file
 
-The first learner-guide release version is v0.1.
+```bash
+java -jar target/ai-calculator-1.0.jar --config=config/application-test.properties
+```
 
-Generated folders such as target/ should not be committed as source code. They can be recreated by running the Maven build command.
+Expected configuration output includes:
+
+```text
+Environment: Test
+Database: database/test-db/aicalculator-test.db
+Security mode: test
+Debug enabled: false
+```
+
+## Database scripts
+
+Apply the schema script first, then the seed script:
+
+```bash
+sqlite3 database/test-db/aicalculator-test.db < database/schema-v0.1.sql
+sqlite3 database/test-db/aicalculator-test.db < database/seed-v0.1.sql
+sqlite3 database/test-db/aicalculator-test.db "SELECT app_name, version, release_status FROM release_info;"
+```
+
+Expected result:
+
+```text
+AICalculatorApp|v0.1|Ready for test
+```
+
+## Security note
+
+The production-style configuration uses placeholder values only. Do not commit live credential values to this repository.
